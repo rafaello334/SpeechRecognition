@@ -1,4 +1,4 @@
-package pl.speechrecognition.dao;
+package pl.speechrecognition.data;
 
 import org.springframework.data.repository.CrudRepository;
 
