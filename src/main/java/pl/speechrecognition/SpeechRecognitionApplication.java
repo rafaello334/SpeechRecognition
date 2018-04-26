@@ -1,4 +1,4 @@
-package pl.speechrecognition.app;
+package pl.speechrecognition;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
