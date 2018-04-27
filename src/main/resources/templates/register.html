@@ -12,12 +12,13 @@
 	<div class="row">
 		<div class="col-md-2 col-md-offset-5">
 			<h2>Welcome in Speech Recognition Calendar</h2>
-			<form method="POST" th:action="@{/login}" th:object="${loginForm}">
+			<form method="POST" th:action="@{/register}" th:object="${registerForm}">
 				<input type="text" th:field="*{username}" placeholder="Login" />
 				<input type="password" th:field="*{password}" placeholder="Password" />
-				<button class="btn btn-large btn-primary" type="submit">Enter system</button>
+				<input type="password" th:field="*{repeatPassword}" placeholder="Repeat password"/>
+				<button class="btn btn-large btn-primary" type="submit">Register</button>
 			</form>
-			<h5><a th:href=@{/register}>Don't have an account? Go and register!</a></h5>
+			<h5><a th:href=@{/}>Main page</a></h5>
 		</div>
 	</div>
   </body>
