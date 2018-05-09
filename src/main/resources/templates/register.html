@@ -4,21 +4,27 @@
     <meta charset="utf-8">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <title>Speech color changer</title>
-	<script type="text/javascript" th:src="@{script.js}"></script>
-    <link rel="stylesheet" th:src="@{styles/home.css}">
+	<script type="text/javascript" src="js/script.js"></script>
+    <link rel="stylesheet" href="css/home.css">
   </head>
 
-  <body background="../static/img/home-background.jpg">
+  <body background="img/indexBackground.jpg">
 	<div class="row">
 		<div class="col-md-2 col-md-offset-5">
 			<h2>Welcome in Speech Recognition Calendar</h2>
 			<form method="POST" th:action="@{/register}" th:object="${registerForm}">
 				<input type="text" th:field="*{username}" placeholder="Login" />
+				<div class="alert alert-danger" th:if="${#fields.hasErrors('username')}">Invalid username!</div>
 				<input type="password" th:field="*{password}" placeholder="Password" />
+				<div class="alert alert-danger" th:if="${#fields.hasErrors('password')}">Invalid password!</div>
 				<input type="password" th:field="*{repeatPassword}" placeholder="Repeat password"/>
+				<div class="alert alert-danger" th:if="${#fields.hasErrors('repeatPassword')}">Invalid repeat password!</div>
 				<button class="btn btn-large btn-primary" type="submit">Register</button>
 			</form>
 			<h5><a th:href=@{/}>Main page</a></h5>
+			
+			<div class="alert alert-danger" th:if="${errorUserExists}"><strong>Error!</strong> Username exists!</div>
+			<div class="alert alert-danger" th:if="${errorRepeat}"><strong>Error!</strong> Repeat password is different!</div>
 		</div>
 	</div>
   </body>

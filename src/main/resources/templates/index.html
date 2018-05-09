@@ -2,22 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="css/home.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script type="text/javascript" src="js/script.js"></script>
     <title>Speech color changer</title>
-	<script type="text/javascript" th:src="@{script.js}"></script>
-    <link rel="stylesheet" th:src="@{styles/home.css}">
   </head>
 
-  <body background="../static/img/home-background.jpg">
+  <body class="main-background">
 	<div class="row">
 		<div class="col-md-2 col-md-offset-5">
 			<h2>Welcome in Speech Recognition Calendar</h2>
-			<form method="POST" th:action="@{/login}" th:object="${loginForm}">
+			<form method="POST" th:action="@{/processLogin}" th:object="${loginForm}">
 				<input type="text" th:field="*{username}" placeholder="Login" />
 				<input type="password" th:field="*{password}" placeholder="Password" />
 				<button class="btn btn-large btn-primary" type="submit">Enter system</button>
 			</form>
 			<h5><a th:href=@{/register}>Don't have an account? Go and register!</a></h5>
+			
+			<div class="alert alert-danger" th:if="${errorLogin}"><strong>Error!</strong> Invalid username or password!</div>
+			
 		</div>
 	</div>
   </body>

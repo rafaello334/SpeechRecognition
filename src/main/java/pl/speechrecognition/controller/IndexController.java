@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import pl.speechrecognition.data.UserRepository;
@@ -24,25 +25,11 @@ public class IndexController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@GetMapping("/test")
-	public void test() {
-		userRepository.save(new User("test", passwordEncoder.encode("test")));
-	}
-
 	@GetMapping("/")
-	public String index() {
-		return "index";
-	}
-
-	@PostMapping("/processLogin")
-	public ModelAndView processLogin(@Valid LoginForm loginForm, BindingResult bindingResult) {
-		ModelAndView model = new ModelAndView();
-		if (bindingResult.hasErrors()) {
-			model.setViewName("register");
-			return model;
-		}
-
-		model.setViewName("redirect:/home");
+	public ModelAndView index(LoginForm loginForm, @RequestParam(required = false) String error) {
+		ModelAndView model = new ModelAndView("index");
+		if (error != null && error.equals("true"))
+			model.addObject("errorLogin", true);
 		return model;
 	}
 
@@ -54,18 +41,15 @@ public class IndexController {
 	@PostMapping("/register")
 	public ModelAndView postRegister(@Valid RegisterForm registerForm, BindingResult bindingResult) {
 		ModelAndView model = new ModelAndView();
+		model.setViewName("register");
 		if (bindingResult.hasErrors()) {
-			model.setViewName("register");
 			return model;
 		}
 		if (userRepository.existsByUsername(registerForm.getUsername())) {
-			model.setViewName("register");
 			model.addObject("errorUserExists", true);
 			return model;
 		}
-
-		if (registerForm.getPassword().equals(registerForm.getRepeatPassword())) {
-			model.setViewName("register");
+		if (!registerForm.getPassword().equals(registerForm.getRepeatPassword())) {
 			model.addObject("errorRepeat", true);
 			return model;
 		}
@@ -73,13 +57,12 @@ public class IndexController {
 		User user = new User(registerForm.getUsername(), passwordEncoder.encode(registerForm.getPassword()));
 		userRepository.save(user);
 
-		model.setViewName("index");
+		model.setViewName("redirect:/");
 		return model;
 	}
 
 	@PostMapping("/logout")
-	public String logout(@Valid LoginForm loginForm, BindingResult bindingResult) {
+	public String logout(@Valid LoginForm loginForm) {
 		return "index";
 	}
-
 }

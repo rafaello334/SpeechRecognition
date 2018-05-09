@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+<link rel="stylesheet" href="css/home.css">
+<title>Speech color changer</title>
+</head>
+
+<body>
+	<h3>
+		Welcome in speech recognition system <span th:text="${username}"></span>
+	</h3>
+	<div class="calendar">
+		<div class="year-month">
+			<a th:href="@{/previousMonth(date=${#dates.format(date, 'yyyy')} + '-' + ${#dates.format(date, 'MM')})}" class="btn btn-primary previous-button">Previous</a>
+			<span th:text="${#dates.format(date, 'yyyy')} + ' - ' + ${#dates.format(date, 'MM')}"></span>
+			<a th:href="@{/nextMonth(date=${#dates.format(date, 'yyyy')} + '-' + ${#dates.format(date, 'MM')})}" class="btn btn-primary next-button">Next</a>
+		</div>
+		<div class="week">
+			<div class="week-day">Monday</div>
+			<div class="week-day">Tuesday</div>
+			<div class="week-day">Wednesday</div>
+			<div class="week-day">Thursday</div>
+			<div class="week-day">Friday</div>
+			<div class="week-day">Saturday</div>
+			<div class="week-day">Sunday</div>
+		</div>
+		
+		<div>	
+			<div class = "days-display" th:each="i : ${#numbers.sequence(1, __${missDivs}__)}">
+				<div th:replace="fragments/monthDay :: monthDayNonActive"></div>
+			</div>
+			<div class = "days-display" th:each="day : ${dayList}">
+				<div th:replace="fragments/monthDay :: monthDay(dayNumber=${day})"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+</body>
+</html>

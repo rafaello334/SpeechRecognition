@@ -45,4 +45,4 @@ public class RegisterForm {
 		this.repeatPassword = repeatPassword;
 	}
 
-	}
+}

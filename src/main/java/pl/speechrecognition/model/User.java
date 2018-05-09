@@ -1,9 +1,14 @@
 package pl.speechrecognition.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -11,13 +16,17 @@ import javax.persistence.Table;
 public class User {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userID;
 
-	@Column(unique=true)
+	@Column(unique = true)
 	private String username;
 
 	private String password;
+
+	@OneToMany
+	@JoinColumn(name = "userID")
+	private List<Event> events;
 
 	public Long getUserID() {
 		return userID;
@@ -48,9 +57,10 @@ public class User {
 		this.password = password;
 	}
 
-	@Override
-	public String toString() {
-		return "User [userID=" + userID + ", username=" + username + ", password=" + password + "]";
+	public List<Event> getEvents() {
+		return events;
 	}
-
+	public void setEvents(List<Event> events) {
+		this.events = events;
+	}
 }

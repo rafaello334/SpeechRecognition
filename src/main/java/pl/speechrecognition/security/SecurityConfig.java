@@ -22,14 +22,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 		.authorizeRequests()	
-			.antMatchers("/", "/register")
+			.antMatchers("/", "/register", "/img/**", "/css/**", "/js/**")
 			.permitAll()
 		.anyRequest()
 			.authenticated()
 			.and()
 		.formLogin()
-			.loginPage("/login")
-			.loginProcessingUrl("/processlogin")
+			.loginPage("/")
+			.loginProcessingUrl("/processLogin")
+			.defaultSuccessUrl("/home")
+			.failureUrl("/?error=true")
 			.permitAll()
 			.and()
 		.logout()
@@ -41,11 +43,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("admin").password("admin");
+		auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder.encode("admin")).roles("USER");
 		
 		auth.jdbcAuthentication().dataSource(dataSource)
 			.passwordEncoder(passwordEncoder)
-			.usersByUsernameQuery(
-				"select username,password from users where username=?");		
+			.usersByUsernameQuery("select username,password, 1 from users where username=?")
+			.authoritiesByUsernameQuery("select username, 'ROLE_USER' from users where username=?");
 	}
+
 }
