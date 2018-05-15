@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel='stylesheet' href='webjars/bootstrap/3.3.7-1/css/bootstrap.min.css' />
-<link rel="stylesheet" href="css/home.css">
-<style>
-
-</style>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
 <body>
-	<div class="day-component" th:fragment="monthDay">
-		<div class="day-name" th:text="${dayNumber}"></div>	
-		<div class="event">Nazwa wydarzenia</div>
+	<div class="day-component" th:fragment="monthDay" data-toggle="modal" data-target="#myModal">
+		<div class="day-name" th:text="${#dates.format(day.date, 'dd')}"></div>
+		<div class="events">
+			<ul th:each="event : ${day.eventsList}">
+				  <li th:text="${#dates.format(event.date, 'HH:mm')} + ' - ' + ${event.message}"></li>
+			</ul>
+		</div>
 	</div>
 	
 	<div class="day-component non-active" th:fragment="monthDayNonActive">
-		<div class="day-name" th:text="${dayNumber}"></div>	
-		<div class="event">Nazwa wydarzenia</div>
+		<div class="day-name"></div>	
+		<div class="events">Event name</div>
 	</div>
 </body>
 </html>

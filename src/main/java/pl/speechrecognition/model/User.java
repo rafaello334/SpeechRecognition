@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -24,8 +23,7 @@ public class User {
 
 	private String password;
 
-	@OneToMany
-	@JoinColumn(name = "userID")
+	@OneToMany(mappedBy="user")
 	private List<Event> events;
 
 	public Long getUserID() {
@@ -51,6 +49,11 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public User()
+	{
+		
+	}
 
 	public User(String username, String password) {
 		this.username = username;
@@ -62,5 +65,10 @@ public class User {
 	}
 	public void setEvents(List<Event> events) {
 		this.events = events;
+	}
+	
+	public String toString()
+	{
+		return "Username: " + username;
 	}
 }

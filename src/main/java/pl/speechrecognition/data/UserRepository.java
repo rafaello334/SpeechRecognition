@@ -1,7 +1,5 @@
 package pl.speechrecognition.data;
 
-import java.util.List;
-
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +9,5 @@ import pl.speechrecognition.model.User;
 public interface UserRepository extends CrudRepository<User, Long> {
 	
 	public boolean existsByUsername(String username);
+	public User findByUsername(String username);
 }

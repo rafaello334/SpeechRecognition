@@ -6,12 +6,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import pl.speechrecognition.tools.ListSearcher;
+
 @Configuration
-@ComponentScan("com.speechrecognition")
+@ComponentScan("pl.speechrecognition")
 public class SpringConfig {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 	    return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
+	public ListSearcher listSearcher() {
+	    return new ListSearcher();
 	}
 }
