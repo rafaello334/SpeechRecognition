@@ -1,75 +1,91 @@
 $(document).ready(function(){
 	
-	// Speech recognition
+	// Speech recognition - configuration
 	
-
 	var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
 	var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
 	var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
-
-	var commands = [ 'next' , 'previous' , 'new event'];
+	var commands = [ 'next' , 'previous' , 'actual'];
 	var grammar = '#JSGF V1.0; grammar commands; public <commands> = ' + commands.join(' | ') + ' ;'
 
 	var recognition = new SpeechRecognition();
 	var speechRecognitionList = new SpeechGrammarList();
 	speechRecognitionList.addFromString(grammar, 1);
 	recognition.grammars = speechRecognitionList;
-	//recognition.continuous = false;
 	recognition.lang = 'en-US';
 	recognition.interimResults = false;
 	recognition.maxAlternatives = 1;
 
-	var diagnostic = document.querySelector('.output');
+	
+	var diagnostic = $("#diagnostic-message");
 	var bg = document.querySelector('html');
-	var hints = document.querySelector('.hints');
+	var newEvent = false;
 
-	var colorHTML= '';
-	colors.forEach(function(v, i, a){
-	  console.log(v, i);
-	  colorHTML += '<span style="background-color:' + v + ';"> ' + v + ' </span>';
-	});
-	hints.innerHTML = 'Tap/click then say a color to change the background color of the app. Try '+ colorHTML + '.';
-
-	document.body.onclick = function() {
-	  recognition.start();
-	  console.log('Ready to receive a color command.');
-	}
-
+	
 	recognition.onresult = function(event) {
-	  // The SpeechRecognitionEvent results property returns a SpeechRecognitionResultList object
-	  // The SpeechRecognitionResultList object contains SpeechRecognitionResult objects.
-	  // It has a getter so it can be accessed like an array
-	  // The [last] returns the SpeechRecognitionResult at the last position.
-	  // Each SpeechRecognitionResult object contains SpeechRecognitionAlternative objects that contain individual results.
-	  // These also have getters so they can be accessed like arrays.
-	  // The [0] returns the SpeechRecognitionAlternative at position 0.
-	  // We then return the transcript property of the SpeechRecognitionAlternative object
-
 	  var last = event.results.length - 1;
-	  var color = event.results[last][0].transcript;
-
-	  diagnostic.textContent = 'Result received: ' + color + '.';
-	  bg.style.backgroundColor = color;
-	  console.log('Confidence: ' + event.results[0][0].confidence);
+	  var command = event.results[last][0].transcript;
+	  switch(command) {
+	    case "next":
+	    	$("#anchorNextMonth")[0].click();
+	        break;
+	    case "previous":
+	    	$("#anchorPreviousMonth")[0].click();
+	        break;
+	    case "actual":
+	    	$("#anchorActualMonth")[0].click();
+	        break;
+	    default:
+	        if(newEvent)
+	        	$('#message-input').val(command);
+	        else 
+	        	console.log("Command not recognized");
+	    	newEvent = false;
+	    	break;
+	  }
 	}
-
+	
 	recognition.onspeechend = function() {
-	  recognition.stop();
+	  hideSpeechModal();
 	}
 
 	recognition.onnomatch = function(event) {
-	  diagnostic.textContent = "I didn't recognise that color.";
+	  diagnostic.text = "I didn't recognise that command.";
 	}
 
 	recognition.onerror = function(event) {
-	  diagnostic.textContent = 'Error occurred in recognition: ' + event.error;
+	  diagnostic.text = 'Error occurred in recognition: ' + event.error;
 	}
 	
 	
+	// Speech modal window show and close
+	
+	var showSpeechModal = function()
+	{
+		$("#btnSpeechRecognitionStart").click();
+	}
+	
+	var hideSpeechModal = function()
+	{
+		$("#btnSpeechClose").click();
+		recognition.stop();
+	}
+	
+		
+	// Invoke speech recognition
+	
+	$('#message-input').click(function() {	
+		newEvent = true;
+		showSpeechModal();
+	});
+	
+	$('#btnSpeechRecognitionStart').click(function() {	
+		recognition.start();
+	});
 	
 	
-
-	// Other functions
+	
+	// Other functions	
 	
 	$('.day-component').click(function() {
 		var yearAndMonth = $('.year-month').find('span').text();

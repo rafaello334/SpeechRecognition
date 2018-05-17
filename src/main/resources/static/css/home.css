@@ -171,3 +171,17 @@ a
     text-decoration: none;
     cursor: pointer;
 }
+
+
+/* Speech modal */
+
+#img-microphone {
+    height: 200px;
+    width: 200px;
+    margin:auto;
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+}

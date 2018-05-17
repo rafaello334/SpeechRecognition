@@ -18,9 +18,11 @@
 		</h3>
 		<div class="calendar">
 			<div class="year-month">
-				<a th:href="@{/home(date=${#dates.format(date, 'yyyy')} + '-' + ${#dates.format(date, 'MM')}, previousOrNext='previous')}" class="btn btn-primary previous-button">Previous</a>
+				<a id="anchorPreviousMonth" th:href="@{/home(date=${#dates.format(date, 'yyyy')} + '-' + ${#dates.format(date, 'MM')}, previousOrNext='previous')}" class="btn btn-primary previous-button">Previous month</a>
+				<a id="anchorPreviousMonth" th:href="@{/home(date=${#dates.format(date, 'yyyy')} + '-' + ${#dates.format(date, 'MM')}, previousOrNext='previous')}" class="btn btn-primary previous-button">Previous year</a>
 				<span th:text="${#dates.format(date, 'yyyy')} + ' - ' + ${#dates.format(date, 'MM')}"></span>
-				<a th:href="@{/home(date=${#dates.format(date, 'yyyy')} + '-' + ${#dates.format(date, 'MM')}, previousOrNext='next')}" class="btn btn-primary next-button">Next</a>
+				<a id="anchorNextMonth" th:href="@{/home(date=${#dates.format(date, 'yyyy')} + '-' + ${#dates.format(date, 'MM')}, previousOrNext='next')}" class="btn btn-primary next-button">Next month</a>
+				<a id="anchorNextMonth" th:href="@{/home(date=${#dates.format(date, 'yyyy')} + '-' + ${#dates.format(date, 'MM')}, previousOrNext='next')}" class="btn btn-primary next-button">Next year</a>
 			</div>
 			<div class="week">
 				<div class="week-day">Monday</div>
@@ -42,7 +44,7 @@
 			</div>
 		</div>
 		
-	  <div class="modal fade" id="myModal" role="dialog">
+	  <div class="modal fade" id="modalNewEvent" role="dialog">
 	    <div class="modal-dialog">
 	      <div class="modal-content">
 	        <div class="modal-header">
@@ -53,14 +55,30 @@
 			<form method="POST" th:action="@{/addEvent}" th:object="${eventForm}">
 				<input id="date-picker" type="date" th:field="*{date}" placeholder="Date" />
 				<input type="time" th:field="*{time}" placeholder="Time" />
-				<input type="text" th:field="*{message}" placeholder="Message" /> <br>
+				<input id="message-input" type="text" th:field="*{message}" placeholder="Message" /> <br>
 				<button class="btn btn-large btn-primary" type="submit">Add event</button>
 			</form>
 	        </div>
 	      </div>	      
 	    </div>
 	  </div>
+	  
+	  <div class="modal fade" id="modalSpeechRecognition" role="dialog">
+	    <div class="modal-dialog">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" id="btnSpeechClose" class="close" data-dismiss="modal">&times;</button>
+	          <h3 style="text-align: center" id="new-event-modal" class="modal-title">Give a command</h3>
+	        </div>
+	        <div class="modal-body">
+	          <div id="img-microphone">
+	            <img src="../img/microphone.png">
+	          </div>
+	        </div>
+	      </div>	      
+	    </div>
+	  </div>
 		
-		<div th:replace="fragments/footer :: footer"></div>
+	  <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

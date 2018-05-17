@@ -5,7 +5,7 @@
 </head>
 
 <body>
-	<div class="day-component" th:fragment="monthDay" data-toggle="modal" data-target="#myModal">
+	<div class="day-component" th:fragment="monthDay" data-toggle="modal" data-target="#modalNewEvent">
 		<div class="day-name" th:text="${#dates.format(day.date, 'dd')}"></div>
 		<div class="events">
 			<ul th:each="event : ${day.eventsList}">
