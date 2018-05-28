@@ -2,28 +2,15 @@ package pl.speechrecognition.model;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Event {
 
-	@Id
-	@GeneratedValue
+
 	private Long eventID;
-
-	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-
 	private String message;
-
-	@ManyToOne
-	@JoinColumn(name = "user_id")
 	private User user;
 
 	public Long getEventID() {
@@ -68,13 +55,5 @@ public class Event {
 		this.date = date;
 		this.message = message;
 		this.user = user;
-	}
-
-	@Override
-	public String toString() {
-		if(user != null)
-			return "USER: " + user.toString() + "   EventID:  " + eventID + "  -  " + message + "   -   "+ date.toString();
-		else
-			return "EventID  " + eventID + "  -  " + message + "   -   "+ date.toString();
 	}
 }

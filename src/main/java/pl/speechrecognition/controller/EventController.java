@@ -13,22 +13,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import pl.speechrecognition.SpeechRecognitionApplication;
-import pl.speechrecognition.data.EventRepository;
-import pl.speechrecognition.data.UserRepository;
 import pl.speechrecognition.forms.EventForm;
 import pl.speechrecognition.model.Event;
+import pl.speechrecognition.model.User;
+import pl.speechrecognition.services.CloudService;
 
 @Controller
-public class EventsController {
+public class EventController {
 
 	@Autowired
-	private EventRepository eventRepository;
+	private CloudService cloudService;
 
-	@Autowired
-	private UserRepository userRepository;
-
-	@PostMapping("addEvent")
+	@PostMapping("/addEvent")
 	public String addEvent(Principal principal, @Valid EventForm eventForm, BindingResult bindingResult) {
 		try {
 			String date = eventForm.getDate() + " " + eventForm.getTime();
@@ -36,9 +32,11 @@ public class EventsController {
 			Event event = new Event();
 			event.setDate(format.parse(date));
 			event.setMessage(eventForm.getMessage());
-			event.setUser(userRepository.findByUsername(principal.getName()));
-			eventRepository.save(event);
-			SpeechRecognitionApplication.logger.info("Event created: " + event);
+			event.setUser(new User(principal.getName()));
+			
+	        cloudService.sendRequestSaveEvent(event);
+	        
+
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

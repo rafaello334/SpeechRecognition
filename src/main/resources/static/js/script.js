@@ -16,8 +16,6 @@ $(document).ready(function(){
 	recognition.interimResults = false;
 	recognition.maxAlternatives = 1;
 
-	
-	var diagnostic = $("#diagnostic-message");
 	var bg = document.querySelector('html');
 	var newEvent = false;
 
@@ -26,37 +24,41 @@ $(document).ready(function(){
 	  var last = event.results.length - 1;
 	  var command = event.results[last][0].transcript;
 	  switch(command) {
-	    case "next":
+	    case "next month":
 	    	$("#anchorNextMonth")[0].click();
 	        break;
-	    case "previous":
+	    case "previous month":
 	    	$("#anchorPreviousMonth")[0].click();
+	        break;
+	    case "next year":
+	    	$("#anchorNextYear")[0].click();
+	        break;
+	    case "previous year":
+	    	$("#anchorPreviousYear")[0].click();
 	        break;
 	    case "actual":
 	    	$("#anchorActualMonth")[0].click();
 	        break;
 	    default:
 	        if(newEvent)
+	        {	
 	        	$('#message-input').val(command);
+	        	hideSpeechModal();
+	        }
 	        else 
-	        	console.log("Command not recognized");
+	        {
+	        	$("#diagnostic-text").text("I didn't recognize command: " + command);
+	        	$("#try-again").text("Click on image to try again");
+	        }
+	    	
 	    	newEvent = false;
 	    	break;
 	  }
 	}
 	
 	recognition.onspeechend = function() {
-	  hideSpeechModal();
+		recognition.stop();
 	}
-
-	recognition.onnomatch = function(event) {
-	  diagnostic.text = "I didn't recognise that command.";
-	}
-
-	recognition.onerror = function(event) {
-	  diagnostic.text = 'Error occurred in recognition: ' + event.error;
-	}
-	
 	
 	// Speech modal window show and close
 	
@@ -67,13 +69,10 @@ $(document).ready(function(){
 	
 	var hideSpeechModal = function()
 	{
-		$("#btnSpeechClose").click();
-		recognition.stop();
+		$("#btnSpeechClose").click();	
 	}
-	
-		
-	// Invoke speech recognition
-	
+
+
 	$('#message-input').click(function() {	
 		newEvent = true;
 		showSpeechModal();
@@ -81,8 +80,14 @@ $(document).ready(function(){
 	
 	$('#btnSpeechRecognitionStart').click(function() {	
 		recognition.start();
+		$("#diagnostic-text").text("Waiting for command...");
 	});
 	
+	$('#img-microphone').click(function() {	
+		$("#diagnostic-text").text("Waiting for command...");
+    	$("#try-again").text("");
+		recognition.start();
+	});
 	
 	
 	// Other functions	

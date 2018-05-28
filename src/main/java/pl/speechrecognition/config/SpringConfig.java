@@ -5,8 +5,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import pl.speechrecognition.tools.ListSearcher;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @ComponentScan("pl.speechrecognition")
@@ -18,7 +17,7 @@ public class SpringConfig {
 	}
 	
 	@Bean
-	public ListSearcher listSearcher() {
-	    return new ListSearcher();
+	public RestTemplate restTemplate() {
+	    return new RestTemplate();
 	}
 }

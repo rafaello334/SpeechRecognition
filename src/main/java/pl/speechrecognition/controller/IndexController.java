@@ -16,19 +16,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import pl.speechrecognition.data.UserRepository;
 import pl.speechrecognition.forms.LoginForm;
 import pl.speechrecognition.forms.RegisterForm;
 import pl.speechrecognition.model.User;
+import pl.speechrecognition.services.CloudService;
 
 @Controller
 public class IndexController {
 
 	@Autowired
-	private UserRepository userRepository;
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private CloudService cloudService;
 
 	@GetMapping("/")
 	public ModelAndView index(LoginForm loginForm, @RequestParam(required = false) String error) {
@@ -37,7 +37,7 @@ public class IndexController {
 			model.addObject("errorLogin", true);
 		return model;
 	}
-
+	
 	@GetMapping("/register")
 	public String getRegister(RegisterForm registerForm) {
 		return "register";
@@ -50,7 +50,7 @@ public class IndexController {
 		if (bindingResult.hasErrors()) {
 			return model;
 		}
-		if (userRepository.existsByUsername(registerForm.getUsername())) {
+		if (cloudService.sendRequestIfUserExists(registerForm.getUsername())) {
 			model.addObject("errorUserExists", true);
 			return model;
 		}
@@ -60,7 +60,7 @@ public class IndexController {
 		}
 
 		User user = new User(registerForm.getUsername(), passwordEncoder.encode(registerForm.getPassword()));
-		userRepository.save(user);
+		cloudService.sendRequestSaveUser(user);
 
 		model.setViewName("redirect:/");
 		return model;
