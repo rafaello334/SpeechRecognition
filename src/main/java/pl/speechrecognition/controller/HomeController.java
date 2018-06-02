@@ -31,6 +31,7 @@ public class HomeController {
 			@RequestParam(name = "previousOrNext", required = false, defaultValue="none") String previousOrNext) {
 		ModelAndView model = new ModelAndView("home");
 		List<Day> dayList = new ArrayList<>();
+		List<Event> eventsList = null;
 		int missDivs;
 		int daysInMonth;
 		int year;
@@ -91,7 +92,8 @@ public class HomeController {
 		
 		daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-		List<Event> eventsList = cloudService.sendRequestGetUserEvents(principal.getName());
+		eventsList = cloudService.sendRequestGetUserEvents(principal.getName());
+		
 		if(eventsList == null)
 		{	
 			eventsList = new ArrayList<>();
@@ -99,7 +101,7 @@ public class HomeController {
 		
 		for (int i = 0; i < daysInMonth; i++) {
 			calendar.set(Calendar.DAY_OF_MONTH, i + 1);
-			dayList.add(new Day(calendar.getTime(), simplyTools.findEventsForDay(eventsList, i + 1)));
+			dayList.add(new Day(calendar.getTime(), simplyTools.findEventsForDay(eventsList, i + 1, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))));
 		}
 		model.addObject("username", principal.getName());
 		model.addObject("dayList", dayList);

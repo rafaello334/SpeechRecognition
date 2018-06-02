@@ -42,6 +42,7 @@ $(document).ready(function(){
 	    default:
 	        if(newEvent)
 	        {	
+	        	command = command.charAt(0).toUpperCase() + command.slice(1);
 	        	$('#message-input').val(command);
 	        	hideSpeechModal();
 	        }
