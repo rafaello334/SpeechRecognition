@@ -44,12 +44,12 @@ public class CloudService {
 		return null;
 	}
 
-	public void changeServerStatusToUnAvailable(String serverName) {
+	private void changeServerStatusToUnAvailable(String serverName) {
 		cloudServersList.stream().filter(cloud -> cloud.getServerName().equals(serverName)).findFirst().get()
 				.setStatus(false);
 	}
 
-	public void changeServerStatusToAvailable(String serverName) {
+	private void changeServerStatusToAvailable(String serverName) {
 		cloudServersList.stream().filter(cloud -> cloud.getServerName().equals(serverName)).findFirst().get()
 				.setStatus(true);
 	}
@@ -106,5 +106,20 @@ public class CloudService {
 			SpeechRecognitionApplication.logger.info("Event created : " + uri.toASCIIString());
 			changeServerStatusToAvailable(cloudServer.getServerName());
 		}
+	}
+	
+	/*
+	 * Configuration requests for recognizing
+	 * 
+	 */
+	public String sendRecognizeRequest(String fileName) {
+		CloudServer cloudServer = getAvailableServer();
+		if (cloudServer != null) {
+			String recognizedCommand = restTemplate.getForObject(cloudServer.getURI() + "/recognize/" + fileName, String.class);
+			SpeechRecognitionApplication.logger.info("Recognized command: " + recognizedCommand);
+			changeServerStatusToAvailable(cloudServer.getServerName());
+			return recognizedCommand;
+		}
+		return null;
 	}
 }

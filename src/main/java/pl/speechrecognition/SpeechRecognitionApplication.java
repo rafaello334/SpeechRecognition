@@ -11,6 +11,5 @@ public class SpeechRecognitionApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpeechRecognitionApplication.class, args);
-
 	}
 }

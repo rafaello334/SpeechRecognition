@@ -1,5 +1,6 @@
 package pl.speechrecognition.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,9 +10,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import pl.speechrecognition.SpeechRecognitionApplication;
 import pl.speechrecognition.forms.EventForm;
 import pl.speechrecognition.model.Day;
 import pl.speechrecognition.model.Event;
@@ -27,8 +34,9 @@ public class HomeController {
 	private SimplyTools simplyTools;
 
 	@GetMapping("/home")
-	public ModelAndView getHome(EventForm eventForm, Principal principal, @RequestParam(name = "date", required = false) String date,
-			@RequestParam(name = "previousOrNext", required = false, defaultValue="none") String previousOrNext) {
+	public ModelAndView getHome(EventForm eventForm, Principal principal,
+			@RequestParam(name = "date", required = false) String date,
+			@RequestParam(name = "previousOrNext", required = false, defaultValue = "none") String previousOrNext) {
 		ModelAndView model = new ModelAndView("home");
 		List<Day> dayList = new ArrayList<>();
 		List<Event> eventsList = null;
@@ -38,7 +46,7 @@ public class HomeController {
 		int month;
 		int missTemp;
 		Calendar calendar;
-		
+
 		switch (previousOrNext) {
 		case "previousMonth":
 			year = Integer.parseInt(date.split("-")[0]);
@@ -49,7 +57,7 @@ public class HomeController {
 				calendar = new GregorianCalendar(year, month - 2, 1);
 
 			break;
-			
+
 		case "nextMonth":
 			year = Integer.parseInt(date.split("-")[0]);
 			month = Integer.parseInt(date.split("-")[1]);
@@ -58,55 +66,74 @@ public class HomeController {
 				calendar = new GregorianCalendar(year + 1, 0, 1);
 			else
 				calendar = new GregorianCalendar(year, month, 1);
-			
+
 			break;
-			
+
 		case "previousYear":
 			year = Integer.parseInt(date.split("-")[0]);
 			month = Integer.parseInt(date.split("-")[1]);
 
 			calendar = new GregorianCalendar(year - 1, month - 1, 1);
 			missTemp = calendar.get(Calendar.DAY_OF_WEEK);
-			
+
 			break;
-			
+
 		case "nextYear":
 			year = Integer.parseInt(date.split("-")[0]);
 			month = Integer.parseInt(date.split("-")[1]);
 			calendar = new GregorianCalendar(year + 1, month - 1, 1);
-			
+
 			break;
 		default:
 			calendar = Calendar.getInstance();
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			
+
 			break;
 		}
-		
+
 		missTemp = calendar.get(Calendar.DAY_OF_WEEK);
-		
-		if(missTemp == 1)
+
+		if (missTemp == 1)
 			missDivs = 6;
 		else
 			missDivs = missTemp - 2;
-		
+
 		daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
 		eventsList = cloudService.sendRequestGetUserEvents(principal.getName());
-		
-		if(eventsList == null)
-		{	
+
+		if (eventsList == null) {
 			eventsList = new ArrayList<>();
 		}
-		
+
 		for (int i = 0; i < daysInMonth; i++) {
 			calendar.set(Calendar.DAY_OF_MONTH, i + 1);
-			dayList.add(new Day(calendar.getTime(), simplyTools.findEventsForDay(eventsList, i + 1, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))));
+			dayList.add(new Day(calendar.getTime(), simplyTools.findEventsForDay(eventsList, i + 1,
+					calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))));
 		}
 		model.addObject("username", principal.getName());
 		model.addObject("dayList", dayList);
 		model.addObject("missDivs", missDivs);
 		model.addObject("date", calendar.getTime());
 		return model;
+	}
+
+	@RequestMapping(value = "/recognizeCommand", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+	public @ResponseBody String recognizeCommand(@RequestPart("file") MultipartFile multipartFile, @RequestPart("fname") String fileName) {
+		String recognizedCommand = null;
+	    try {
+	    	SpeechRecognitionApplication.logger.info("Sound received: " + fileName);
+	        simplyTools.saveFile(multipartFile, fileName);
+	        String outputFileName = simplyTools.convertTo16khzWav(fileName);
+	        recognizedCommand = cloudService.sendRecognizeRequest(outputFileName);
+	        SpeechRecognitionApplication.logger.info("Recognized command returned from Cloud server: " + recognizedCommand);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    return recognizedCommand;
+	    
 	}
 }

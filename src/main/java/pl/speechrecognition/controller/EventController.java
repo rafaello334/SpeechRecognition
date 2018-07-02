@@ -33,9 +33,8 @@ public class EventController {
 			event.setDate(format.parse(date));
 			event.setMessage(eventForm.getMessage());
 			event.setUser(new User(principal.getName()));
-			
-	        cloudService.sendRequestSaveEvent(event);
-	        
+
+			cloudService.sendRequestSaveEvent(event);
 
 		} catch (ParseException e) {
 			e.printStackTrace();
